@@ -1,0 +1,2 @@
+id,type,subtype,price,transactionType,kitchen,energy,bedroom,land,outdoor,wellnessEquipment,condition,location
+10161140,house,house,399000,for sale,{'type': 'installed'},{'heatingType': 'gas'},{'count': '4'},{'surface': '485'},"{'garden': {'surface': '230'}, 'terrace': {'exists': 'true'}}",{'hasSwimmingPool': ''},{'isNewlyBuilt': ''},Sint-Niklaas
