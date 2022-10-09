@@ -1,7 +1,11 @@
+import flatdict
 import requests
-from bs2json import bs2json
 from bs4 import BeautifulSoup
+import re
+from bs2json import bs2json
 import json
+import csv
+
 
 root_url = "https://www.immoweb.be/nl/zoeken/huis-en-appartement/te-koop?countries=BE&page="
 header = {
@@ -9,62 +13,55 @@ header = {
     'referer': 'https://www.immoweb.be/en'
 }
 
+for page in range(1, 334):
+    links = root_url + str(page)
 
-# to get general house list
-def get_house_list():
-    for page in range(1, 334):
-        link = root_url + str(page)
+    house_html = requests.get(links, headers=header)
+    soup = BeautifulSoup(house_html.text, 'html.parser')
+    house_container = soup.find_all('main', class_='main')
+    json1 = bs2json().convertAll(house_container, join=True)
+    house_json = json1[0]['main'][0]['iw-search']['attributes'][':results']
+    house_dict = json.loads(house_json)
 
-        house_html = requests.get(link, headers=header)
-        soup = BeautifulSoup(house_html.text, 'html.parser')
+    # to get each house page's url
+    for i in range(0, 30):
+        property_id = house_dict[i]['id']
+        property_location = house_dict[i]['property']['location']["district"]
+        property_postcode = house_dict[i]['property']['location']['postalCode']
+        property_type = house_dict[i]['property']['type']
+        property_transaction_type = "te-koop"
 
-        house_container = soup.find_all('main', class_='main')
-        converter = bs2json()
-        json1 = converter.convertAll(house_container, join=True)
-        dict_json = json1[0]['main'][0]['iw-search']['attributes'][':results']
-
-        new_dict = json.loads(dict_json)
-        return new_dict
-
-
-# to get each page's url
-def get_house_url():
-    for i in range(0, 29):
-        property_id = get_house_list()[i]['id']
-        property_location = get_house_list()[i]['property']['location']["district"]
-        property_postcode = get_house_list()[i]['property']['location']['postalCode']
-        property_type = get_house_list()[i]['property']['type']
-        propert_transaction_type = "te-koop"
-
-        # get page's url
         each_house_base_url = "https://www.immoweb.be/nl/zoekertje/"
-        each_house_url = f"{each_house_base_url}{property_type}/{propert_transaction_type}/{property_location}/{str(property_postcode)}/{str(property_id)}"
+        link = f"{each_house_base_url}{property_type}/{property_transaction_type}/{property_location}/{property_postcode}/{property_id}"
 
-        # to request each house's url
-        property_request = requests.get(each_house_url, headers=header)
+        # to get each house's information
+        property_request = requests.get(link, headers=header)
         property_soup = BeautifulSoup(property_request.text, 'html.parser')
 
-        # get js from each house html page convert them to dict
-        value = property_soup.find_all('script', type='text/javascript')[0].text
-        value_to_dict = value[value.find('{'):value.rfind('}') + 1]
-        value_dict = dict(json.loads(value_to_dict))
-        return value_dict
+        # convert json to dict, add location in the dict
+        script_text = property_soup.find('script', text=re.compile("\s+window.dataLayer")).text.split('= ', 1)[1]
+        json_data = json.loads(script_text[script_text.find('{'):script_text.rfind('}') + 1])
+        property_info = json_data['classified']
+        property_info['location'] = property_location
+
+        # get required info from property_info
+        key_lst = ['id', 'type', 'subtype', 'price', 'transactionType', 'kitchen', 'energy',
+                   'bedroom', 'land',
+                   'outdoor', 'wellnessEquipment', 'condition', 'location']
+        required_property_info = {key: value
+                                  for key, value in property_info.items()
+                                  if key in key_lst}
+
+        # flat the required_property_info
+        flat_required_property_info = (flatdict.FlatDict(required_property_info, delimiter='.'))
+        print(flat_required_property_info)
+
+        with open('immo.csv', 'w', newline='', encoding='utf-8') as f:
+            headers = ['id', 'type', 'subtype', 'price', 'transactionType', 'energy.heatingType', 'bedroom.count',
+                       'land.surface', 'outdoor.garden.surface', 'outdoor.terrace.exists',
+                       'wellnessEquipment.hasSwimmingPool', 'condition.isNewlyBuilt', 'location']
+            writer = csv.DictWriter(f, fieldnames=required_property_info.keys())
+            writer.writeheader()
+            writer.writerow(required_property_info)
 
 
-# to get each house's information
-def get_house_dict():
-    house_value_dict = {}
-    for key in get_house_url():
-        property_info = get_house_url()['property']
-        property_info['price'] = get_house_url()['price']['mainValue']
-        print(property_info)
-        '''
-        locality = property_info['location']
-        locality_values = dict(list(locality.items())[:8])
-        property_type = property_info['type']
-        '''
-
-
-get_house_list()
-get_house_url()
-get_house_dict()
