@@ -22,7 +22,7 @@ for page in range(1, 334):
     house_json = json1[0]['main'][0]['iw-search']['attributes'][':results']
     house_dict = json.loads(house_json)
 
-    with open('immo.csv', 'a', newline="", encoding='utf-8') as f:
+    with open('immoweb.csv', 'a', newline="", encoding='utf-8') as f:
         headers = ['id', 'type', 'subtype', 'price', 'transactionType', 'kitchen_type', 'energy_heatingType',
                    'bedroom_count', 'land_surface',
                    'outdoor_terrace_exists', 'outdoor_garden_surface', 'wellnessEquipment_hasSwimmingPool',
