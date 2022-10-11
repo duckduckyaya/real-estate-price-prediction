@@ -10320,7 +10320,7 @@ id,type,subtype,price,transactionType,kitchen_type,energy_heatingType,bedroom_co
 9952537,house,house,324000,for sale,,,2,210,true,,,,Hasselt
 10031894,house,house,324000,for sale,installed,,3,1329,,750,,,Hasselt
 9990828,house,house,325000,for sale,installed,fueloil,5,426,,,,,Hasselt
-10103432,house,house,325000,for sale,hyper equipped,electric,4,440,true,300,,,Hasselt
+10103432,house,house,325000 ,for sale,hyper equipped,electric,4,440,true,300,,,Hasselt
 
 
 
