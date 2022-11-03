@@ -10,7 +10,21 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\data-acquisition\immowebepc.csv">
+        <entry key="\deployment\immo.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\model_training\clean_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\model_training\immowebepc.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
