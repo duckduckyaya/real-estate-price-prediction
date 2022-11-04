@@ -24,24 +24,24 @@ def preprocess(features):
 
     data = pd.concat([data, ohe_df], axis=1).drop(['Type', 'locality', 'Province', 'Region', 'HeatingType', 'IsDoubleGlaze'], axis=1)
 
-    return data
+    return data[0]
 
 def predict():
     model = joblib.load('model.pkl')
     if request.method == 'POST':
         # data = request.form.to_dict(features)    #POST
         
-        features = request.args.get(features)  #GET
+        # features = request.args.get(features)  #GET
+        features = request.get_json()
         
         prediction = model.predict(preprocess(features))
-        prediction = str(prediction)
-        prediction = prediction.strip("[].")  
+        
 
         price = {
             'price': prediction[0]
         }
 
-        return price
+        return jsonify(price)
     else:
         request.method == 'GET'
         return "API is working"
