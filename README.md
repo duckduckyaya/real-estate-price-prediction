@@ -19,15 +19,25 @@ This repo starts from scratch, scraping data from immoweb, cleaning data, data v
 variables in the dataset:
 
 > **1. Type :** type of this property
+
 > **2. Price :** price of property
+
 > **3. BedroomCount :** bedroom number of the property
+
 > **4. Province :** province of the property
+
 > **5. locality :** city of the property
+
 > **6. Region :** region of the property
+
 > **7. NetHabitableSurface :** the property's surface area
+
 > **8. ConstructionYear :** age of the property
+
 > **9. FacadeCount :** the number of facade of th property
+
 > **10. HeatingType :** heating type of the property
+
 > **11. IsDoubleGlaze :** is the property has doble glass
 
 ## Data acquisition
